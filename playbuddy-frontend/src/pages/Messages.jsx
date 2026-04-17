@@ -20,22 +20,22 @@ export default function Messages() {
       if (Array.isArray(data)) {
         setContacts(data);
       }
-    }).catch(() => {});
+    }).catch(() => { });
   }, []);
   useEffect(() => {
     if (active) {
       const fetchMessages = () => {
         authFetch(`/api/messages/${active._id}`).then(r => r.json()).then(data => {
           if (Array.isArray(data)) setMessages(data);
-        }).catch(() => {});
+        }).catch(() => { });
       };
-      
+
       fetchMessages();
       const interval = setInterval(fetchMessages, 4000);
-      
+
       // Mark as read when opening conversation
-      authFetch(`/api/messages/mark-read/${active._id}`, { method: 'PUT' }).catch(() => {});
-      
+      authFetch(`/api/messages/mark-read/${active._id}`, { method: 'PUT' }).catch(() => { });
+
       return () => clearInterval(interval);
     }
   }, [active, authFetch]);
@@ -45,14 +45,14 @@ export default function Messages() {
   const sendMessage = async () => {
     if (!text.trim() || sending) return;
     const newMsg = { _id: `local-${Date.now()}`, sender: 'me', text: text.trim(), createdAt: new Date() };
-    
+
     setMessages(m => [...m, newMsg]);
     setText('');
     setSending(true);
     try {
       const res = await authFetch('/api/messages', { method: 'POST', body: JSON.stringify({ receiverId: active._id, text: text.trim() }) });
       if (!res.ok) throw new Error('Failed to send message');
-      
+
       const savedMsg = await res.json();
       // Replace the local optimistic message with the real one from DB to get the actual `_id` and `createdAt`
       setMessages(m => m.map(msg => msg._id === newMsg._id ? savedMsg : msg));
@@ -61,7 +61,7 @@ export default function Messages() {
       // Revert optimistic update on failure
       setMessages(m => m.filter(msg => msg._id !== newMsg._id));
     }
-    
+
     setSending(false);
   };
 
@@ -97,7 +97,7 @@ export default function Messages() {
             <>
               <div style={{ padding: '14px 20px', borderBottom: '2px solid var(--border)', background: 'var(--card-bg)', display: 'flex', alignItems: 'center', gap: 12 }}>
                 <button className="btn-outline hide-desktop" style={{ padding: '6px 12px', fontSize: '1.2rem', marginRight: '4px', border: 'none' }} onClick={() => setActive(null)}>⬅️</button>
-                <div className="contact-avatar" style={{ width: 42, height: 42, fontSize: '1.3rem', background: 'linear-gradient(135deg,var(--sky),var(--purple))' }}>{active.avatar || '👤'}</div>
+                <div className="contact-avatar" style={{ width: 42, height: 42, fontSize: '1.3rem', background: 'linear-gradient(135deg,var(--sky),var(--purple))' }}>{'👤'}</div>
                 <div>
                   <div style={{ fontWeight: 800 }}>{active.name}</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--green)', fontWeight: 700 }}>● Online</div>
