@@ -18,14 +18,6 @@ const TYPE_TAG = {
 };
 const EMOJIS = { Art: '🎨', Sports: '⚽', Music: '🎵', Games: '🧩', Education: '🔬', Other: '🎉' };
 
-const DEFAULT_EVENTS = [
-  { _id: 'd1', title: 'Rainbow Painting Day', type: 'Art', emoji: '🎨', date: 'Sat, Dec 14', time: '10:00 AM', location: 'Central Park Community Center', price: 'FREE', rsvps: [], ageMin: 5, ageMax: 10 },
-  { _id: 'd2', title: 'Mini Soccer Tournament', type: 'Sports', emoji: '⚽', date: 'Sun, Dec 15', time: '9:00 AM', location: 'Riverside Sports Complex', price: '$5/child', rsvps: [], ageMin: 4, ageMax: 8 },
-  { _id: 'd3', title: 'Kids Drum Circle', type: 'Music', emoji: '🎵', date: 'Tue, Dec 17', time: '4:00 PM', location: 'Harmony Music Studio', price: 'FREE', rsvps: [], ageMin: 3, ageMax: 10 },
-  { _id: 'd4', title: 'Family Game Afternoon', type: 'Games', emoji: '🧩', date: 'Wed, Dec 18', time: '2:00 PM', location: 'PlayBuddy HQ (Virtual)', price: 'FREE', rsvps: [], ageMin: 6, ageMax: 12 },
-  { _id: 'd5', title: 'Science Fair Jr.', type: 'Education', emoji: '🔬', date: 'Fri, Dec 20', time: '11:00 AM', location: 'Science Discovery Museum', price: '$10/family', rsvps: [], ageMin: 7, ageMax: 12 },
-];
-
 export default function Events() {
   const { authFetch, user } = useAuth();
   const showToast = useToast();
@@ -39,15 +31,13 @@ export default function Events() {
 
   useEffect(() => {
     authFetch('/api/events').then(r => r.json()).then(data => {
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setEvents(data);
         const initRsvp = {};
         data.forEach(ev => { if (ev.rsvps?.some(id => id === user?._id || id?._id === user?._id)) initRsvp[ev._id] = true; });
         setRsvped(initRsvp);
-      } else {
-        setEvents(DEFAULT_EVENTS);
       }
-    }).catch(() => setEvents(DEFAULT_EVENTS)).finally(() => setLoading(false));
+    }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const handleRSVP = async (eventId) => {

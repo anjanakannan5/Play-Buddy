@@ -32,7 +32,7 @@ export default function Sidebar() {
         {user && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-              {user.avatar || '👩'}
+              {'👨🏻‍👩🏻‍👧🏻‍👦🏻'}
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{user.name}</div>

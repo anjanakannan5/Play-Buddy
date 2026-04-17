@@ -5,24 +5,41 @@ import { useAuth } from '../context/AuthContext';
 import DarkToggle from '../components/DarkToggle';
 
 export default function Dashboard() {
-  const { user, authFetch } = useAuth();
+  const { user, authFetch, refreshUser } = useAuth();
   const navigate = useNavigate();
   const [children, setChildren] = useState([]);
   const [events, setEvents] = useState([]);
   const [stats, setStats] = useState({ children: 0, rsvps: 0, messages: 0, points: 0 });
 
   useEffect(() => {
-    authFetch('/api/children').then(r => r.json()).then(data => {
-      if (Array.isArray(data)) setChildren(data);
-    }).catch(() => {});
-    authFetch('/api/events').then(r => r.json()).then(data => {
-      if (Array.isArray(data)) {
-        setEvents(data.slice(0, 3));
-        const myRsvps = data.filter(e => e.rsvps?.includes(user?._id)).length;
-        setStats(s => ({ ...s, rsvps: myRsvps }));
-      }
-    }).catch(() => {});
-  }, []);
+    const fetchStats = () => {
+      authFetch('/api/children').then(r => r.json()).then(data => {
+        if (Array.isArray(data)) setChildren(data);
+      }).catch(() => { });
+
+      authFetch('/api/events').then(r => r.json()).then(data => {
+        if (Array.isArray(data)) {
+          setEvents(data.slice(0, 3));
+          const myRsvps = data.filter(e => e.rsvps?.includes(user?._id)).length;
+          setStats(s => ({ ...s, rsvps: myRsvps }));
+        }
+      }).catch(() => { });
+
+      authFetch('/api/messages/unread-count').then(r => r.json()).then(data => {
+        if (data && typeof data.count === 'number') {
+          setStats(s => ({ ...s, messages: data.count }));
+        }
+      }).catch(() => { });
+
+      refreshUser(); // Sync points and other profile data
+    };
+
+    fetchStats();
+
+    // Refresh when browser tab gets focus (user returns to dashboard)
+    window.addEventListener('focus', fetchStats);
+    return () => window.removeEventListener('focus', fetchStats);
+  }, [authFetch, user?._id, refreshUser]);
 
   useEffect(() => {
     if (children.length !== undefined) setStats(s => ({ ...s, children: children.length, points: user?.points || 0 }));
@@ -34,7 +51,7 @@ export default function Dashboard() {
   const statCards = [
     { label: 'Children', value: stats.children, icon: '👶', color: 'var(--sky)', grad: 'grad-sky', border: 'rgba(56,189,248,0.3)', bg: 'linear-gradient(135deg,var(--sky),#0284C7)' },
     { label: 'RSVPs', value: stats.rsvps, icon: '📅', color: 'var(--pink)', grad: 'grad-pink', border: 'rgba(244,114,182,0.3)', bg: 'linear-gradient(135deg,var(--pink),#EC4899)' },
-    { label: 'Messages', value: 0, icon: '💬', color: 'var(--green)', grad: 'grad-green', border: 'rgba(52,211,153,0.3)', bg: 'linear-gradient(135deg,var(--green),#059669)' },
+    { label: 'Messages', value: stats.messages, icon: '💬', color: 'var(--green)', grad: 'grad-green', border: 'rgba(52,211,153,0.3)', bg: 'linear-gradient(135deg,var(--green),#059669)' },
     { label: 'Points', value: user?.points || 0, icon: '⭐', color: 'var(--purple)', grad: 'grad-purple', border: 'rgba(167,139,250,0.3)', bg: 'linear-gradient(135deg,var(--purple),#7C3AED)' },
   ];
 
@@ -50,13 +67,9 @@ export default function Dashboard() {
       <div className="dash-navbar">
         <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Dashboard 🏠</h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ position: 'relative', display: 'inline-flex' }}>
-            <span style={{ fontSize: '1.5rem', cursor: 'pointer' }}>🔔</span>
-            <span className="notif-count" style={{ position: 'absolute', top: -4, right: -6, background: 'var(--red)', color: 'white', fontSize: 10, fontWeight: 800, width: 18, height: 18, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>3</span>
-          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
             <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,var(--sky),var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>
-              {user?.avatar || '👩'}
+              {'👨🏻‍👩🏻‍👧🏻‍👦🏻'}
             </div>
             <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{user?.name?.split(' ')[0]}</span>
           </div>

@@ -31,29 +31,65 @@ export default function VoiceGame() {
 
   const handleMic = () => {
     if (listening) return;
-    setListening(true);
-    setWaveActive(true);
-    setShowResult(null);
 
-    setTimeout(() => {
-      const correct = Math.random() > 0.3;
-      const said = correct ? word.word : ['Cat', 'Ball', 'Tree', 'Sun'][Math.floor(Math.random() * 4)];
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      showToast('❌ Voice recognition not supported in this browser.', 'error');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      setListening(true);
+      setWaveActive(true);
+      setShowResult(null);
+    };
+
+    recognition.onresult = (event) => {
+      const said = event.results[0][0].transcript;
+      const cleanSaid = said.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g,"").trim();
+      const targetWord = word.word.toLowerCase();
+      
+      const correct = cleanSaid === targetWord || cleanSaid.includes(targetWord);
+      
       setListening(false);
       setWaveActive(false);
       setShowResult({ said, correct });
 
       if (correct) {
-        const newScore = score + 10;
-        setScore(newScore);
+        setScore(s => s + 10);
         launchConfetti();
         showToast('🎉 Correct! +10 points!', 'success');
         saveResult(word.word, true);
       } else {
-        showToast(`❌ Almost! The answer was "${word.word}"`, 'warning');
+        showToast(`❌ Almost! You said "${said}"`, 'warning');
         saveResult(word.word, false);
       }
-      setHistory(h => [{ word: word.word, correct, emoji: word.emoji }, ...h].slice(0, 5));
-    }, 2000);
+      setHistory(h => [{ word: word.word, correct, emoji: word.emoji, said }, ...h].slice(0, 5));
+    };
+
+    recognition.onerror = (event) => {
+      setListening(false);
+      setWaveActive(false);
+      if (event.error === 'no-speech') {
+        showToast('🎤 No speech detected. Try again!', 'warning');
+      } else if (event.error === 'not-allowed') {
+        showToast('🚫 Microphone permission denied.', 'error');
+      } else {
+        showToast(`❌ Error: ${event.error}`, 'error');
+      }
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+      setWaveActive(false);
+    };
+
+    recognition.start();
   };
 
   const saveResult = async (w, correct) => {

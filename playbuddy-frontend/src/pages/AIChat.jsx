@@ -45,17 +45,16 @@ export default function AIChat() {
     <DashboardLayout>
       <div className="dash-navbar">
         <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>AI Chat 🤖</h3>
-        <DarkToggle />
       </div>
 
-      <div className="main-content" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 62px)', padding: 0 }}>
+      <div className="main-content" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 65px)', padding: 0 }}>
         {/* Header */}
         <div style={{ padding: '16px 24px', background: 'linear-gradient(135deg,var(--purple),var(--sky))', color: 'white' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🤖</div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.05rem' }}>PlayBuddy AI Assistant</div>
-              <div style={{ opacity: 0.85, fontSize: '0.85rem', fontWeight: 600 }}>Powered by Claude · Always here to help 💜</div>
+              <div style={{ opacity: 0.85, fontSize: '0.85rem', fontWeight: 600 }}>Always here to help 💜</div>
             </div>
           </div>
         </div>

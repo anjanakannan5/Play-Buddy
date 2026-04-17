@@ -3,87 +3,77 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
-const DEMO_CONTACTS = [
-  { _id: 'c1', name: 'Emma\'s Mom - Lisa', avatar: '👩', lastMsg: 'See you at the park! 🌳' },
-  { _id: 'c2', name: 'Jake\'s Dad - Tom', avatar: '👨', lastMsg: 'Sounds great! The kids will love it' },
-  { _id: 'c3', name: 'Sophie\'s Mom - Anna', avatar: '👩‍🦰', lastMsg: 'Can\'t wait for the playdate! 🎉' },
-  { _id: 'c4', name: 'PlayBuddy Support', avatar: '🤖', lastMsg: 'How can we help you today?' },
-];
 
-const DEMO_MESSAGES = {
-  c1: [
-    { _id: 'm1', sender: 'c1', text: 'Hey! Are you coming to the painting event this Saturday?', createdAt: new Date(Date.now() - 3600000) },
-    { _id: 'm2', sender: 'me', text: 'Yes! Emma is so excited about it 🎨', createdAt: new Date(Date.now() - 3500000) },
-    { _id: 'm3', sender: 'c1', text: 'See you at the park! 🌳', createdAt: new Date(Date.now() - 3400000) },
-  ],
-  c2: [
-    { _id: 'm4', sender: 'c2', text: 'The soccer tournament is going to be amazing!', createdAt: new Date(Date.now() - 7200000) },
-    { _id: 'm5', sender: 'me', text: 'Liam has been practicing all week!', createdAt: new Date(Date.now() - 7100000) },
-    { _id: 'm6', sender: 'c2', text: 'Sounds great! The kids will love it', createdAt: new Date(Date.now() - 7000000) },
-  ],
-};
 
 export default function Messages() {
   const { authFetch, user } = useAuth();
   const showToast = useToast();
-  const [contacts, setContacts] = useState(DEMO_CONTACTS);
-  const [active, setActive] = useState(DEMO_CONTACTS[0]);
-  const [messages, setMessages] = useState(DEMO_MESSAGES['c1'] || []);
+  const [contacts, setContacts] = useState([]);
+  const [active, setActive] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
 
   useEffect(() => {
     authFetch('/api/messages/contacts').then(r => r.json()).then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        setContacts([...data, ...DEMO_CONTACTS]);
+      if (Array.isArray(data)) {
+        setContacts(data);
       }
     }).catch(() => {});
   }, []);
-
   useEffect(() => {
     if (active) {
-      const demo = DEMO_MESSAGES[active._id] || [];
-      if (active._id.startsWith('c')) {
-        setMessages(demo);
-      } else {
+      const fetchMessages = () => {
         authFetch(`/api/messages/${active._id}`).then(r => r.json()).then(data => {
-          if (Array.isArray(data)) setMessages([...demo, ...data]);
-        }).catch(() => setMessages(demo));
-      }
+          if (Array.isArray(data)) setMessages(data);
+        }).catch(() => {});
+      };
+      
+      fetchMessages();
+      const interval = setInterval(fetchMessages, 4000);
+      
+      // Mark as read when opening conversation
+      authFetch(`/api/messages/mark-read/${active._id}`, { method: 'PUT' }).catch(() => {});
+      
+      return () => clearInterval(interval);
     }
-  }, [active]);
+  }, [active, authFetch]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   const sendMessage = async () => {
     if (!text.trim() || sending) return;
     const newMsg = { _id: `local-${Date.now()}`, sender: 'me', text: text.trim(), createdAt: new Date() };
+    
     setMessages(m => [...m, newMsg]);
     setText('');
     setSending(true);
-
-    if (!active._id.startsWith('c')) {
-      try {
-        await authFetch('/api/messages', { method: 'POST', body: JSON.stringify({ receiverId: active._id, text: text.trim() }) });
-      } catch { showToast('Could not send message', 'error'); }
+    try {
+      const res = await authFetch('/api/messages', { method: 'POST', body: JSON.stringify({ receiverId: active._id, text: text.trim() }) });
+      if (!res.ok) throw new Error('Failed to send message');
+      
+      const savedMsg = await res.json();
+      // Replace the local optimistic message with the real one from DB to get the actual `_id` and `createdAt`
+      setMessages(m => m.map(msg => msg._id === newMsg._id ? savedMsg : msg));
+    } catch {
+      showToast('Could not send message', 'error');
+      // Revert optimistic update on failure
+      setMessages(m => m.filter(msg => msg._id !== newMsg._id));
     }
-
-    // Simulate reply for demo contacts
-    if (active._id.startsWith('c')) {
-      const replies = ["That's so exciting! 🎉", "Great idea! Let's do it! 🌟", "Our kids are going to love that! 😄", "Sounds perfect! 🎈", "Can't wait! See you then! 👋"];
-      setTimeout(() => {
-        setMessages(m => [...m, { _id: `reply-${Date.now()}`, sender: active._id, text: replies[Math.floor(Math.random() * replies.length)], createdAt: new Date() }]);
-      }, 1200);
-    }
+    
     setSending(false);
   };
 
   return (
     <DashboardLayout>
-      <div style={{ display: 'flex', height: 'calc(100vh - 0px)', overflow: 'hidden' }}>
+      <div className="dash-navbar">
+        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Message Parents 💬</h3>
+      </div>
+
+      <div style={{ display: 'flex', height: 'calc(100dvh - 65px)', overflow: 'hidden' }}>
         {/* Contacts */}
-        <div className="contacts-panel" style={{ width: 280, flexShrink: 0 }}>
+        <div className={`contacts-panel ${active ? 'hide-mobile' : ''}`}>
           <div style={{ padding: '16px 16px 12px', borderBottom: '2px solid var(--border)', fontWeight: 800, fontSize: '1rem' }}>
             💬 Messages
           </div>
@@ -102,10 +92,11 @@ export default function Messages() {
         </div>
 
         {/* Chat */}
-        <div className="chat-panel">
+        <div className={`chat-panel ${!active ? 'hide-mobile' : ''}`}>
           {active ? (
             <>
               <div style={{ padding: '14px 20px', borderBottom: '2px solid var(--border)', background: 'var(--card-bg)', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <button className="btn-outline hide-desktop" style={{ padding: '6px 12px', fontSize: '1.2rem', marginRight: '4px', border: 'none' }} onClick={() => setActive(null)}>⬅️</button>
                 <div className="contact-avatar" style={{ width: 42, height: 42, fontSize: '1.3rem', background: 'linear-gradient(135deg,var(--sky),var(--purple))' }}>{active.avatar || '👤'}</div>
                 <div>
                   <div style={{ fontWeight: 800 }}>{active.name}</div>

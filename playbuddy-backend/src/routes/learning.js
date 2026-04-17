@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const Learning = require('../models/Learning');
+const User = require('../models/User');
 
 const learningContent = {
   vocab: {
@@ -48,6 +49,28 @@ const learningContent = {
 
 // GET /api/learning/:type - get learning content
 router.get('/:type', protect, async (req, res) => {
+  if (req.params.type === 'stats') {
+    // Return aggregate progress stats
+    try {
+      const history = await Learning.find({ user: req.user._id });
+      const stats = {
+        vocab: 0,
+        math: 0,
+        story: 0,
+        science: 0
+      };
+      
+      // Calculate max score per type as "progress"
+      history.forEach(h => {
+        if (h.score > stats[h.type]) stats[h.type] = Math.round(h.score);
+      });
+      
+      return res.json(stats);
+    } catch (err) {
+      return res.status(500).json({ message: 'Error fetching stats' });
+    }
+  }
+
   const content = learningContent[req.params.type];
   if (!content) return res.status(404).json({ message: 'Learning type not found' });
   res.json(content);
@@ -74,6 +97,9 @@ router.post('/:type/submit', protect, async (req, res) => {
       completed: true,
       answers: results.map(r => ({ question: r.question, correct: r.correct })),
     });
+
+    // Add 10 points for finishing a quiz
+    await User.findByIdAndUpdate(req.user._id, { $inc: { points: 10 } });
 
     res.json({ score, total: content.questions.length, results, percentage: Math.round((score / content.questions.length) * 100) });
   } catch (err) {

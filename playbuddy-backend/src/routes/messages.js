@@ -14,6 +14,29 @@ router.get('/contacts', protect, async (req, res) => {
   }
 });
 
+// GET /api/messages/unread-count - get total unread messages
+router.get('/unread-count', protect, async (req, res) => {
+  try {
+    const count = await Message.countDocuments({ receiver: req.user._id, read: false });
+    res.json({ count });
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching unread count' });
+  }
+});
+
+// PUT /api/messages/mark-read/:userId - mark messages from a user as read
+router.put('/mark-read/:userId', protect, async (req, res) => {
+  try {
+    await Message.updateMany(
+      { sender: req.params.userId, receiver: req.user._id, read: false },
+      { $set: { read: true } }
+    );
+    res.json({ message: 'Messages marked as read' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error marking messages as read' });
+  }
+});
+
 // GET /api/messages/:userId - get conversation with a user
 router.get('/:userId', protect, async (req, res) => {
   try {

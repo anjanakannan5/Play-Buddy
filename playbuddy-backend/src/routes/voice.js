@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Voice = require('../models/Voice');
+const User = require('../models/User');
 const { protect } = require('../middleware/auth');
 
 // GET /api/voice/score - get user's voice game score
@@ -23,7 +24,10 @@ router.post('/submit', protect, async (req, res) => {
       record = new Voice({ user: req.user._id, score: 0, rounds: 0, history: [] });
     }
     record.rounds += 1;
-    if (correct) record.score += 10;
+    if (correct) {
+      record.score += 10;
+      await User.findByIdAndUpdate(req.user._id, { $inc: { points: 10 } });
+    }
     record.history.push({ word, correct, date: new Date() });
     await record.save();
     res.json(record);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -6,16 +6,23 @@ import Celebration from '../components/Celebration';
 import { launchConfetti } from '../components/Confetti';
 import DarkToggle from '../components/DarkToggle';
 
-const LESSONS = [
-  { type: 'vocab', icon: '📖', title: 'Vocabulary Builder', desc: 'Learn new words and expand your language skills with fun exercises.', color: 'var(--sky)', grad: 'linear-gradient(135deg,var(--sky),#0284C7)', progress: 65 },
-  { type: 'math', icon: '🔢', title: 'Math Adventures', desc: 'Practice addition, subtraction, multiplication, and division.', color: 'var(--green)', grad: 'linear-gradient(135deg,var(--green),#059669)', progress: 40 },
-  { type: 'story', icon: '📚', title: 'Story Time', desc: 'Build reading comprehension and storytelling skills.', color: 'var(--pink)', grad: 'linear-gradient(135deg,var(--pink),#EC4899)', progress: 80 },
-  { type: 'science', icon: '🔬', title: 'Science Lab', desc: 'Explore the wonders of science with interactive questions.', color: 'var(--purple)', grad: 'linear-gradient(135deg,var(--purple),#7C3AED)', progress: 25 },
+const LESSONS_TEMPLATE = [
+  { type: 'vocab', icon: '📖', title: 'Vocabulary Builder', desc: 'Learn new words and expand your language skills with fun exercises.', color: 'var(--sky)', grad: 'linear-gradient(135deg,var(--sky),#0284C7)' },
+  { type: 'math', icon: '🔢', title: 'Math Adventures', desc: 'Practice addition, subtraction, multiplication, and division.', color: 'var(--green)', grad: 'linear-gradient(135deg,var(--green),#059669)' },
+  { type: 'story', icon: '📚', title: 'Story Time', desc: 'Build reading comprehension and storytelling skills.', color: 'var(--pink)', grad: 'linear-gradient(135deg,var(--pink),#EC4899)' },
+  { type: 'science', icon: '🔬', title: 'Science Lab', desc: 'Explore the wonders of science with interactive questions.', color: 'var(--purple)', grad: 'linear-gradient(135deg,var(--purple),#7C3AED)' },
 ];
 
 export default function Learning() {
   const { authFetch } = useAuth();
   const showToast = useToast();
+  const [progressStats, setProgressStats] = useState({ vocab: 0, math: 0, story: 0, science: 0 });
+
+  useEffect(() => {
+    authFetch('/api/learning/stats').then(r => r.json()).then(data => {
+      if (data) setProgressStats(data);
+    }).catch(() => {});
+  }, []);
 
   const [quiz, setQuiz] = useState(null); // { title, questions }
   const [quizType, setQuizType] = useState('');
@@ -107,28 +114,31 @@ export default function Learning() {
 
         {/* Lesson Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, marginBottom: 32 }}>
-          {LESSONS.map(lesson => (
-            <div key={lesson.type} className="learning-card">
-              <span className="learning-icon">{lesson.icon}</span>
-              <h4 style={{ fontWeight: 800, marginBottom: 8 }}>{lesson.title}</h4>
-              <p style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.9rem', lineHeight: 1.6, marginBottom: 14 }}>{lesson.desc}</p>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${lesson.progress}%`, background: lesson.grad }} />
+          {LESSONS_TEMPLATE.map(lesson => {
+            const progress = progressStats[lesson.type] || 0;
+            return (
+              <div key={lesson.type} className="learning-card">
+                <span className="learning-icon">{lesson.icon}</span>
+                <h4 style={{ fontWeight: 800, marginBottom: 8 }}>{lesson.title}</h4>
+                <p style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: '0.9rem', lineHeight: 1.6, marginBottom: 14 }}>{lesson.desc}</p>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${progress}%`, background: lesson.grad }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, marginBottom: 16 }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>Progress</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: lesson.color }}>{progress}%</span>
+                </div>
+                <button
+                  className="btn-playbuddy w-100"
+                  style={{ background: lesson.grad }}
+                  onClick={() => startLesson(lesson.type)}
+                  disabled={loading}
+                >
+                  {loading ? '⏳ Loading...' : '🚀 Start Lesson'}
+                </button>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, marginBottom: 16 }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>Progress</span>
-                <span style={{ fontSize: '0.8rem', fontWeight: 800, color: lesson.color }}>{lesson.progress}%</span>
-              </div>
-              <button
-                className="btn-playbuddy w-100"
-                style={{ background: lesson.grad }}
-                onClick={() => startLesson(lesson.type)}
-                disabled={loading}
-              >
-                {loading ? '⏳ Loading...' : '🚀 Start Lesson'}
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Achievements */}

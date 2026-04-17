@@ -73,8 +73,22 @@ export function AuthProvider({ children }) {
     return res;
   }, [logout]);
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('pb-token');
+      if (!token) return;
+      const res = await fetch(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+      }
+    } catch {}
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, authFetch }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, authFetch, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
