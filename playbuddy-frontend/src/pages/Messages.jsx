@@ -80,7 +80,7 @@ export default function Messages() {
           {contacts.map(c => (
             <div key={c._id} className={`contact-item ${active?._id === c._id ? 'active' : ''}`} onClick={() => setActive(c)}>
               <div className="contact-avatar" style={{ background: 'linear-gradient(135deg,var(--sky),var(--purple))', position: 'relative' }}>
-                {c.avatar || '👤'}
+                {'👤'}
                 <div style={{ width: 10, height: 10, background: 'var(--green)', borderRadius: '50%', border: '2px solid white', position: 'absolute', bottom: 0, right: 0 }} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
