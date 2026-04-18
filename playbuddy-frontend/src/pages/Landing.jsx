@@ -23,7 +23,7 @@ export default function Landing() {
                 Together 🌈
               </h1>
               <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', fontWeight: 600, lineHeight: 1.8, marginBottom: 32, maxWidth: 500 }}>
-                The ultimate platform for parents to find safe playdates, fun learning activities, and build meaningful community connections.
+                The ultimate platform for parents to find fun learning activities, and build meaningful community connections for their children.
               </p>
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                 <button className="btn-playbuddy" style={{ fontSize: '1.1rem', padding: '14px 32px' }} onClick={() => navigate('/auth')}>
@@ -34,7 +34,7 @@ export default function Landing() {
                 </button>
               </div>
               <div style={{ display: 'flex', gap: 24, marginTop: 28, flexWrap: 'wrap' }}>
-                {[['50K+','Happy Kids'], ['30K+','Parents'], ['10K+','Events']].map(([v, l]) => (
+                {[['50K+', 'Happy Kids'], ['30K+', 'Parents'], ['10K+', 'Events']].map(([v, l]) => (
                   <div key={l}>
                     <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--purple)', fontFamily: "'Baloo 2', cursive" }}>{v}</div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700 }}>{l}</div>
@@ -46,20 +46,20 @@ export default function Landing() {
               <svg viewBox="0 0 340 320" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', maxWidth: 340 }}>
                 <defs>
                   <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#A78BFA"/>
-                    <stop offset="100%" stopColor="#38BDF8"/>
+                    <stop offset="0%" stopColor="#A78BFA" />
+                    <stop offset="100%" stopColor="#38BDF8" />
                   </linearGradient>
                 </defs>
-                <circle cx="170" cy="160" r="130" fill="url(#heroGrad)" opacity="0.12"/>
-                <rect x="70" y="60" width="200" height="200" rx="30" fill="white" opacity="0.9" stroke="#C4B5FD" strokeWidth="2"/>
+                <circle cx="170" cy="160" r="130" fill="url(#heroGrad)" opacity="0.12" />
+                <rect x="70" y="60" width="200" height="200" rx="30" fill="white" opacity="0.9" stroke="#C4B5FD" strokeWidth="2" />
                 <text x="170" y="140" fontSize="60" textAnchor="middle">🎈</text>
                 <text x="170" y="200" fontSize="18" fontWeight="700" fill="#7C3AED" textAnchor="middle" fontFamily="Baloo 2">PlayBuddy</text>
                 <text x="170" y="225" fontSize="11" fill="#64748B" textAnchor="middle" fontFamily="Nunito" fontWeight="600">Safe Play. Smart Learning.</text>
-                <circle cx="60" cy="80" r="24" fill="#FDE68A" opacity="0.7"/>
+                <circle cx="60" cy="80" r="24" fill="#FDE68A" opacity="0.7" />
                 <text x="60" y="88" fontSize="22" textAnchor="middle">⭐</text>
-                <circle cx="290" cy="200" r="20" fill="#F9A8D4" opacity="0.7"/>
+                <circle cx="290" cy="200" r="20" fill="#F9A8D4" opacity="0.7" />
                 <text x="290" y="208" fontSize="18" textAnchor="middle">🌟</text>
-                <circle cx="290" cy="80" r="18" fill="#BBF7D0" opacity="0.7"/>
+                <circle cx="290" cy="80" r="18" fill="#BBF7D0" opacity="0.7" />
                 <text x="290" y="88" fontSize="16" textAnchor="middle">✨</text>
               </svg>
             </div>
