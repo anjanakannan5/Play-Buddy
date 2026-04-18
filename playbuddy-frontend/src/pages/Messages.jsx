@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -67,11 +68,11 @@ export default function Messages() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Message Parents 💬</h3>
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="Message Parents 💬" onMenuClick={toggleMobileMenu} />
 
-      <div style={{ display: 'flex', height: 'calc(100dvh - 65px)', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', height: 'calc(100dvh - 65px)', overflow: 'hidden', position: 'relative' }}>
         {/* Contacts */}
         <div className={`contacts-panel ${active ? 'hide-mobile' : ''}`}>
           <div style={{ padding: '16px 16px 12px', borderBottom: '2px solid var(--border)', fontWeight: 800, fontSize: '1rem' }}>
@@ -142,6 +143,8 @@ export default function Messages() {
           )}
         </div>
       </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

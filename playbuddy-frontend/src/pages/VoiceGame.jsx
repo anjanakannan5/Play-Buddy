@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { launchConfetti } from '../components/Confetti';
@@ -111,10 +112,9 @@ export default function VoiceGame() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Voice Game 🎙️</h3>
-        <DarkToggle />
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="Voice Game 🎙️" onMenuClick={toggleMobileMenu} />
 
       <div className="main-content">
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
@@ -215,6 +215,8 @@ export default function VoiceGame() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

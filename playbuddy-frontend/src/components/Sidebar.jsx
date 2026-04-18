@@ -12,7 +12,7 @@ const navItems = [
   { path: '/ai-chat', icon: '🤖', label: 'AI Chat' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -23,7 +23,9 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
+      <button className="sidebar-close-btn" onClick={onClose} aria-label="Close Sidebar">✕</button>
+      
       <div className="sidebar-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
           <span style={{ fontSize: '1.8rem' }}>🎈</span>
@@ -32,7 +34,7 @@ export default function Sidebar() {
         {user && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-              {'👨🏻‍👩🏻‍👧🏻‍👦🏻'}
+              {'👨🏻‍👩🏻'}
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{user.name}</div>
@@ -47,7 +49,10 @@ export default function Sidebar() {
           <div
             key={item.path}
             className={`sidebar-item ${location.pathname === item.path ? 'active' : ''}`}
-            onClick={() => navigate(item.path)}
+            onClick={() => {
+              navigate(item.path);
+              if (onClose) onClose();
+            }}
           >
             <span className="item-icon">{item.icon}</span>
             {item.label}

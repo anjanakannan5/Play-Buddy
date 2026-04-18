@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import DarkToggle from '../components/DarkToggle';
 
@@ -43,11 +44,11 @@ export default function AIChat() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>AI Chat 🤖</h3>
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="AI Chat 🤖" onMenuClick={toggleMobileMenu} />
 
-      <div className="main-content" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 65px)', padding: 0 }}>
+          <div className="main-content" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 65px)', padding: 0, position: 'relative' }}>
         {/* Header */}
         <div style={{ padding: '16px 24px', background: 'linear-gradient(135deg,var(--purple),var(--sky))', color: 'white' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -93,7 +94,7 @@ export default function AIChat() {
         <div style={{ padding: '16px 24px', borderTop: '2px solid var(--border)', background: 'var(--card-bg)', display: 'flex', gap: 10 }}>
           <input
             className="chat-input"
-            placeholder="Ask me anything about parenting, activities, or kids! 💬"
+            placeholder={window.innerWidth < 600 ? "Ask anything..." : "Ask me anything about parenting, activities, or kids! 💬"}
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
@@ -104,6 +105,8 @@ export default function AIChat() {
           </button>
         </div>
       </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

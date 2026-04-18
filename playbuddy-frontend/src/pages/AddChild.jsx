@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import DarkToggle from '../components/DarkToggle';
@@ -66,10 +67,9 @@ export default function AddChild() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Add Child Profile 👶</h3>
-        <DarkToggle />
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="Add Child Profile 👶" onMenuClick={toggleMobileMenu} />
       <div className="main-content">
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center' }}>
           <div style={{ flex: '1 1 380px', maxWidth: 520 }}>
@@ -148,6 +148,8 @@ export default function AddChild() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

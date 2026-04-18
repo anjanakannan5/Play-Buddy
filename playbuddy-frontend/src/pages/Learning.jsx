@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Celebration from '../components/Celebration';
@@ -100,10 +101,9 @@ export default function Learning() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Learning Games 🧠</h3>
-        <DarkToggle />
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="Learning Games 🧠" onMenuClick={toggleMobileMenu} />
 
       <div className="main-content">
         {/* Header */}
@@ -143,14 +143,14 @@ export default function Learning() {
 
         {/* Achievements */}
         <div className="section-title">Achievements 🏆</div>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
           {[
             { icon: '⭐', label: 'First Lesson', color: 'var(--yellow)' },
             { icon: '🔥', label: '3-Day Streak', color: 'var(--orange)' },
             { icon: '🎯', label: 'Perfect Score', color: 'var(--green)' },
             { icon: '📚', label: 'Book Worm', color: 'var(--purple)' },
           ].map(a => (
-            <div key={a.label} className="play-card" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div key={a.label} className="play-card" style={{ padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
               <span style={{ fontSize: '1.8rem' }}>{a.icon}</span>
               <span style={{ fontWeight: 800, color: a.color, fontSize: '0.9rem' }}>{a.label}</span>
             </div>
@@ -232,6 +232,8 @@ export default function Learning() {
       )}
 
       {celebration && <Celebration emoji={celebration.emoji} title={celebration.title} message={celebration.message} onClose={closeQuiz} />}
+        </>
+      )}
     </DashboardLayout>
   );
 }

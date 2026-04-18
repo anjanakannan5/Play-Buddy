@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import DarkToggle from '../components/DarkToggle';
 
@@ -64,17 +65,9 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Dashboard 🏠</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'linear-gradient(135deg,var(--sky),var(--purple))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>
-              {'👨🏻‍👩🏻‍👧🏻‍👦🏻'}
-            </div>
-            <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{user?.name?.split(' ')[0]}</span>
-          </div>
-        </div>
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="Dashboard 🏠" onMenuClick={toggleMobileMenu} />
 
       <div className="main-content">
         {/* Welcome Banner */}
@@ -171,6 +164,8 @@ export default function Dashboard() {
           </>
         )}
       </div>
+        </>
+      )}
     </DashboardLayout>
   );
 }

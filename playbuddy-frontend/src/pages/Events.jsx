@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import DashboardNavbar from '../components/DashboardNavbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import DarkToggle from '../components/DarkToggle';
@@ -79,12 +80,19 @@ export default function Events() {
 
   return (
     <DashboardLayout>
-      <div className="dash-navbar">
-        <h3 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Events 📅</h3>
-        <button className="btn-playbuddy" style={{ padding: '8px 18px', fontSize: '0.9rem' }} onClick={() => setShowModal(true)}>
-          ➕ Create Event
-        </button>
-      </div>
+      {({ toggleMobileMenu }) => (
+        <>
+          <DashboardNavbar title="Events 📅" onMenuClick={toggleMobileMenu} />
+          {/* Header Action Button moved to navbar-friendly area if needed, 
+              but let's keep it in the content for accessibility or add it to navbar. 
+              Let's put it as a floating action or just below title. */}
+          <div className="main-content" style={{ paddingBottom: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: -10 }}>
+              <button className="btn-playbuddy" style={{ padding: '8px 18px', fontSize: '0.9rem' }} onClick={() => setShowModal(true)}>
+                ➕ Create Event
+              </button>
+            </div>
+          </div>
 
       <div className="main-content">
         {/* Filters */}
@@ -161,7 +169,7 @@ export default function Events() {
                 <span className="form-icon">📋</span>
                 <input type="text" className="form-control-play" placeholder="Description (optional)" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 18 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 18 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <span className="form-icon">🏷️</span>
                   <select className="form-select-play" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
@@ -173,7 +181,7 @@ export default function Events() {
                   <input type="text" className="form-control-play" placeholder="Price (e.g. FREE)" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} />
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 18 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 18 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <span className="form-icon">📅</span>
                   <input type="date" className="form-control-play" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required />
@@ -187,7 +195,7 @@ export default function Events() {
                 <span className="form-icon">📍</span>
                 <input type="text" className="form-control-play" placeholder="Location" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 24 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <span className="form-icon">👶</span>
                   <select className="form-select-play" value={form.ageMin} onChange={e => setForm(f => ({ ...f, ageMin: +e.target.value }))}>
@@ -210,6 +218,8 @@ export default function Events() {
             </form>
           </div>
         </div>
+      )}
+        </>
       )}
     </DashboardLayout>
   );
