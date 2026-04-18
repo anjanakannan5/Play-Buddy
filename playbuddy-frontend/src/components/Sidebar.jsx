@@ -4,7 +4,7 @@ import DarkToggle from './DarkToggle';
 
 const navItems = [
   { path: '/dashboard', icon: '🏠', label: 'Dashboard' },
-  { path: '/add-child', icon: '👶', label: 'Add Child', badge: '+' },
+  { path: '/add-child', icon: '👶', label: 'Add Child Profile', badge: '+' },
   { path: '/events', icon: '📅', label: 'Events', badge: 'New' },
   { path: '/messages', icon: '💬', label: 'Messaging' },
   { path: '/learning', icon: '🧠', label: 'Learning' },
@@ -25,7 +25,7 @@ export default function Sidebar({ isOpen, onClose }) {
   return (
     <aside className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
       <button className="sidebar-close-btn" onClick={onClose} aria-label="Close Sidebar">✕</button>
-      
+
       <div className="sidebar-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
           <span style={{ fontSize: '1.8rem' }}>🎈</span>
