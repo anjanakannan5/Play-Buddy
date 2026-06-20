@@ -1,104 +1,57 @@
-# 🎈 PlayBuddy – Safe Play. Smart Learning. Happy Kids.
+# PlayBuddy – Safe Play, Smart Learning
 
-A full-stack family platform built with **React + Vite** (frontend) and **Node.js + Express + MongoDB** (backend).
+An interactive frontend web platform engineered to deliver cognitive learning frameworks, safe digital activities, and engaging play environments for children.
 
----
+## Deployment Link
+* **Live Web Application:** [https://play-buddy-lilac.vercel.app](https://play-buddy-lilac.vercel.app)
 
-## 🚀 Quick Start
-
-### 1. Backend Setup
-
-```bash
-cd playbuddy-backend
-npm install
-cp .env.example .env
-# Edit .env and fill in your values (especially ANTHROPIC_API_KEY)
-npm run dev
-```
-
-The backend will start on **http://localhost:5000**
-
-### 2. Frontend Setup
-
-```bash
-cd playbuddy-frontend
-npm install
-npm run dev
-```
-
-The frontend will start on **http://localhost:5173**
+## Team and Contributors
+* **Anjana Kannan** (@anjanakannan5) 
+* **Vishwajith G S** (@VishwajithGS) 
 
 ---
 
-## 🔧 Environment Variables (`.env` in backend)
+## Project Overview
+PlayBuddy is built to provide an educational ecosystem where child-safe entertainment meets structured analytical learning. The system breaks away from typical unmonitored digital content structures by implementing deliberate, engaging frontend flows that support early learning milestones while maintaining strict interface clarity for parents and children alike.
 
-| Variable | Description |
-|---|---|
-| `PORT` | Backend port (default: 5000) |
-| `MONGODB_URI` | Your MongoDB connection string |
-| `JWT_SECRET` | Secret key for JWT tokens |
-| `JWT_EXPIRES_IN` | Token expiry (e.g. `7d`) |
-| `ANTHROPIC_API_KEY` | Your Anthropic API key (for AI chat) |
-| `CLIENT_URL` | Frontend URL (default: http://localhost:5173) |
-| `NODE_ENV` | `development` or `production` |
+The application leverages progressive web design methodologies to serve high-fidelity media assets, logical puzzle pathways, and information matrices smoothly on hardware ranging from desktop monitors to low-tier touch devices.
 
 ---
 
-## ✅ Bug Fixes Applied
+## Core System Modules
 
-### 1. 🔐 User Login Now Shows Real User Data
-**Problem:** After login/signup, the dashboard showed hardcoded "Sarah Johnson" instead of the actual user.
+### Dynamic Cognitive Play Space
+* **Interactive Modules:** Custom visual interfaces designed to engage early childhood development through gamified patterns and input recognition.
+* **Asset Optimization:** Tailored layout handling to serve vector elements and graphics quickly without increasing initial page loading overhead.
 
-**Fix:**
-- `AuthContext.jsx` stores the JWT token in `localStorage` after login/signup
-- On app load, it calls `GET /api/auth/me` with the token to fetch the real user from MongoDB
-- All UI components (Sidebar, Dashboard, DashNav) read from `AuthContext` — never hardcoded
-
-### 2. 🧠 Learning Feature Now Works with Real Quizzes
-**Problem:** Clicking a learning activity only showed an alert/toast — no actual lesson.
-
-**Fix:**
-- Backend `GET /api/learning/:type` serves 5 real questions per subject (vocab, math, story, science)
-- Frontend renders a full quiz modal with multiple-choice options, instant feedback (green/red), and progress bar
-- `POST /api/learning/:type/submit` saves scores to MongoDB
-- Results screen shows score percentage and allows retrying
-
-### 3. 📅 Events Can Now Be Created
-**Problem:** The "+ Create Event" button had no functionality — no form existed.
-
-**Fix:**
-- Added a full modal form with: title, description, type, date, time, location, age range, price
-- `POST /api/events` saves the event to MongoDB with the creator's user ID
-- Events list is fetched from the backend; falls back to demo events if none exist
-- RSVP toggle works for both real and demo events
+### Safe Navigation Infrastructure
+* **Strict Router Bounds:** Dedicated user flows that restrict external ad script loading or unsafe third-party tracking loops.
+* **Accessible Layout Frameworks:** Simplified visual structures featuring high-contrast text, scaling layouts, and readable spacing blocks engineered for early-stage learners.
 
 ---
 
-## 📁 Project Structure
-
-```
-playbuddy/
-├── playbuddy-frontend/          # React + Vite
-│   └── src/
-│       ├── context/             # AuthContext, ThemeContext, ToastContext
-│       ├── layouts/             # DashboardLayout, MainLayout
-│       ├── components/          # Sidebar, Navbar, DarkToggle, etc.
-│       └── pages/               # Landing, Auth, Dashboard, Events, Learning, etc.
-│
-└── playbuddy-backend/           # Node.js + Express
-    └── src/
-        ├── models/              # User, Child, Event, Learning, Message, Voice
-        ├── routes/              # auth, children, events, learning, messages, ai, voice
-        ├── middleware/          # JWT auth middleware
-        └── utils/               # JWT helpers
-```
+## Architectural and Technical Stack
+* **UI Layer:** HTML5, CSS3, JavaScript (ES6+)
+* **Responsive Layout Architecture:** Native Flexbox and Grid matrices paired with advanced layout viewport breakpoints.
+* **Deployment Engineering:** Automated production builds hosted via the Vercel edge network infrastructure.
 
 ---
 
-## 🤖 AI Chat
-The AI chat uses Claude via the Anthropic API. Set your `ANTHROPIC_API_KEY` in `.env`.
-If no key is set, it falls back to friendly pre-written responses so the app still works.
+## Local Configuration and Deployment
+
+1. Clone the repository locally:
+   ```bash
+   git clone https://github.com
+   cd Play-Buddy
+   ```
+
+2. Boot up a local hot-reloading development environment:
+   ```bash
+   # Utilizing direct local package serving tools
+   npx live-server .
+   ```
 
 ---
 
-Made with 💜 for families everywhere.
+## License
+This application infrastructure is open for peer review and educational assessments. All graphics, intellectual structures, and specific kid-focused copy assets remain property of the authors.
